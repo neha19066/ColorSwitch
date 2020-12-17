@@ -13,8 +13,10 @@ import javafx.scene.image.ImageView;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.stage.FileChooser;
 import javafx.util.Duration;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.Serializable;
 import java.net.URL;
@@ -25,6 +27,10 @@ import static javafx.fxml.FXMLLoader.load;
 public class Controller implements Initializable {
     @FXML
     MediaPlayer musicPlayer;
+    @FXML
+    Button Pause;
+    @FXML
+    ImageView pause_image;
     @FXML
     TextArea Star_Label;
     @FXML
@@ -47,14 +53,16 @@ public class Controller implements Initializable {
     @FXML
     ImageView Exit_Game_img;
 
-    public void initialize(URL location, ResourceBundle resources) {
+    public void initialize(URL location, ResourceBundle resources)
+    {
+        Main.colorswitch.set_gui(this);
         musicPlayer.setOnEndOfMedia(new Runnable() {
             public void run() {
                 musicPlayer.seek(Duration.ZERO);
                 musicPlayer.play();
             }
         });
-        System.out.println(Main.colorswitch.is_video());
+//        System.out.println(Main.colorswitch.is_video());
         if (Main.colorswitch.is_video()) {
             videobutton.setDisable(false);
         } else {
@@ -65,7 +73,7 @@ public class Controller implements Initializable {
 
     @FXML
     void bonusVideo() throws IOException {
-        System.out.println("Bonus Availed");
+//        System.out.println("Bonus Availed");
         Main.colorswitch.setVideo();
         musicPlayer.pause();
         Main.colorswitch.bonusstars();
@@ -73,17 +81,34 @@ public class Controller implements Initializable {
         Main.window.setScene(videoPage);
         // ********* ADD THIS Star_Label.setText(Integer.toString(curr_stars+30));
     }
+    @FXML
+    public void pause_music() throws IOException
+    {
+//        System.out.println("Pause Pressed");
+        if(musicPlayer.isMute())
+        {
+            musicPlayer.setMute(false);
+            pause_image.setImage(new Image(new FileInputStream("src\\pause.png")));
+        }
+        else
+        {
+            musicPlayer.setMute(true);
+            pause_image.setImage(new Image(new FileInputStream("src\\play.png")));
+        }
 
+    }
     @FXML
     void Quit() {
-        Platform.exit();
+        Main.colorswitch.exit_game();
     }
     @FXML
-    void Begin_New() {
-        Platform.exit();
+    void Begin_New() throws IOException
+    {
+        Main.colorswitch.mygame=new Game();
+        Main.colorswitch.new_game();
     }
     @FXML
-    void Resume_old() {
-        Platform.exit();
+    void Resume_old() throws IOException {
+        Main.colorswitch.resume_game();
     }
 }
